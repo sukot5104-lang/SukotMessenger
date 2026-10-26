@@ -12,8 +12,8 @@
         android:padding="24dp">
 
         <ImageView
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:layout_marginTop="40dp"
             android:contentDescription="@string/app_name"
             android:src="@drawable/ic_logo" />
@@ -21,18 +21,26 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/app_name"
+            android:layout_marginTop="20dp"
+            android:text="@string/name_title"
             android:textColor="?attr/colorOnSurface"
-            android:textSize="26sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvNamePhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/primary"
+            android:textSize="15sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:gravity="center"
-            android:text="@string/tagline"
+            android:text="@string/name_desc"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="14sp" />
 
@@ -40,23 +48,7 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
-            android:hint="@string/username_hint">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etUser"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:maxLength="20"
-                android:maxLines="1" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="28dp"
             android:hint="@string/name_hint">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -64,24 +56,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
+                android:maxLength="30"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStart"
+            android:id="@+id/btnFinish"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="28dp"
-            android:text="@string/btn_start"
+            android:layout_marginTop="24dp"
+            android:text="@string/btn_finish"
             android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="@string/first_chat_note"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="13sp" />
     </LinearLayout>
 </ScrollView>

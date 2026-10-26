@@ -24,6 +24,9 @@ object Mqtt {
     const val BROKER = "tcp://broker.emqx.io:1883"
     const val ACTION_MSG = "com.sukot.messenger.ACTION_MSG"
     const val ACTION_STATE = "com.sukot.messenger.ACTION_STATE"
+    const val ACTION_PRESENCE = "com.sukot.messenger.ACTION_PRESENCE"
+    const val ACTION_TYPING = "com.sukot.messenger.ACTION_TYPING"
+    const val ACTION_SMS_CODE = "com.sukot.messenger.ACTION_SMS_CODE"
     const val CHANNEL_SERVICE = "service"
     const val CHANNEL_MSGS = "messages"
 
@@ -53,17 +56,24 @@ object Mqtt {
         )
     }
 
-    fun connect(ctx: Context, username: String) {
+    fun connect(ctx: Context, phone: String) {
         val c = ctx.applicationContext
         ensureChannel(c)
         appCtx = c
-        if (me == username && client?.isConnected == true) return
-        if (me != username) {
-            me = username
+        if (me == phone && client?.isConnected == true) return
+        if (me != phone) {
+            me = phone
             try { client?.disconnectForcibly(800) } catch (_: Exception) {}
             client = null
         }
         if (client == null) build(c)
+    }
+
+    fun shutdown() {
+        try { publishPresence(false) } catch (_: Exception) {}
+        try { client?.disconnect(2000) } catch (_: Exception) {}
+        client = null
+        me = ""
     }
 
     private fun scheduleRetry(ctx: Context) {
@@ -75,6 +85,22 @@ object Mqtt {
         }, 15000)
     }
 
+    private fun presenceOnlinePayload(): ByteArray {
+        return JSONObject()
+            .put("f", me)
+            .put("st", "online")
+            .put("ts", System.currentTimeMillis())
+            .toString().toByteArray(Charsets.UTF_8)
+    }
+
+    private fun presenceOfflinePayload(): ByteArray {
+        return JSONObject()
+            .put("f", me)
+            .put("st", "offline")
+            .put("ts", System.currentTimeMillis())
+            .toString().toByteArray(Charsets.UTF_8)
+    }
+
     private fun build(ctx: Context) {
         try {
             try { client?.disconnectForcibly(500) } catch (_: Exception) {}
@@ -84,7 +110,14 @@ object Mqtt {
             val c = MqttAsyncClient(BROKER, Crypto.clientIdFor(me), MemoryPersistence())
             c.setCallback(object : MqttCallbackExtended {
                 override fun connectComplete(reconnect: Boolean, serverURI: String?) {
-                    try { c.subscribe(Crypto.topicFor(me), 1) } catch (_: Exception) {}
+                    try {
+                        c.subscribe(Crypto.topicFor(me), 1)
+                        subscribePeersPresence()
+                        c.publish(
+                            Crypto.presenceFor(me),
+                            MqttMessage(presenceOnlinePayload()).apply { qos = 1; isRetained = true }
+                        )
+                    } catch (_: Exception) {}
                     broadcastState(ctx)
                 }
 
@@ -93,7 +126,12 @@ object Mqtt {
                 }
 
                 override fun messageArrived(topic: String?, message: MqttMessage?) {
-                    if (message != null) onBytes(ctx, message.payload)
+                    if (topic == null || message == null) return
+                    if (topic.startsWith("sukot/v1/p/")) {
+                        onPresence(ctx, message.payload)
+                    } else {
+                        onBytes(ctx, message.payload)
+                    }
                 }
 
                 override fun deliveryComplete(token: IMqttDeliveryToken?) {}
@@ -104,6 +142,8 @@ object Mqtt {
                 isAutomaticReconnect = true
                 connectionTimeout = 15
                 keepAliveInterval = 30
+                // اگر ناخواسته قطع شد، بروکر «آفلاین» را برای ما ثبت می‌کند (آخرین بازدید)
+                setWill(Crypto.presenceFor(me), presenceOfflinePayload(), 1, true)
             }
 
             client = c
@@ -123,13 +163,46 @@ object Mqtt {
         }
     }
 
+    fun subscribePresence(peer: String) {
+        val c = client ?: return
+        if (!c.isConnected || peer.isBlank()) return
+        try { c.subscribe(Crypto.presenceFor(peer), 1) } catch (_: Exception) {}
+    }
+
+    private fun subscribePeersPresence() {
+        val c = client ?: return
+        val ctx = appCtx ?: return
+        val peers = Db(ctx).peers()
+        if (peers.isEmpty()) return
+        val topics = peers.map { Crypto.presenceFor(it) }.toTypedArray()
+        val qos = IntArray(topics.size) { 1 }
+        try { c.subscribe(topics, qos) } catch (_: Exception) {}
+    }
+
+    fun publishPresence(online: Boolean) {
+        val c = client ?: return
+        if (!c.isConnected || me.isBlank()) return
+        try {
+            val payload = if (online) presenceOnlinePayload() else presenceOfflinePayload()
+            c.publish(
+                Crypto.presenceFor(me),
+                MqttMessage(payload).apply { qos = 1; isRetained = true }
+            )
+        } catch (_: Exception) {}
+    }
+
     fun send(ctx: Context, to: String, text: String) {
         val from = me
         if (from.isBlank() || to.isBlank()) return
         val db = Db(ctx)
         val id = UUID.randomUUID().toString()
         val ts = System.currentTimeMillis()
-        val inner = JSONObject().put("t", to).put("m", text).put("ts", ts).put("id", id)
+        val inner = JSONObject()
+            .put("t", to)
+            .put("m", text)
+            .put("ts", ts)
+            .put("id", id)
+            .put("n", Prefs.myName(ctx))
         val outer = JSONObject().put("f", from).put("d", Crypto.encrypt(inner.toString(), listOf(from, to)))
         db.insert(Msg(id, to, true, text, ts, "pending"))
         try {
@@ -142,12 +215,45 @@ object Mqtt {
         broadcastMsg(ctx, to)
     }
 
+    fun sendTyping(to: String) {
+        val from = me
+        if (from.isBlank() || to.isBlank()) return
+        try {
+            val inner = JSONObject().put("typing", 1).put("ts", System.currentTimeMillis())
+            val outer = JSONObject().put("f", from).put("d", Crypto.encrypt(inner.toString(), listOf(from, to)))
+            val m = MqttMessage(outer.toString().toByteArray(Charsets.UTF_8))
+            m.qos = 0
+            client?.publish(Crypto.topicFor(to), m)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun onPresence(ctx: Context, raw: ByteArray) {
+        try {
+            val j = JSONObject(String(raw, Charsets.UTF_8))
+            val from = j.optString("f")
+            if (from.isBlank() || from == me) return
+            ctx.sendBroadcast(
+                Intent(ACTION_PRESENCE).setPackage(ctx.packageName)
+                    .putExtra("peer", from)
+                    .putExtra("st", j.optString("st"))
+                    .putExtra("ts", j.optLong("ts", 0L))
+            )
+        } catch (_: Exception) {
+        }
+    }
+
     private fun onBytes(ctx: Context, raw: ByteArray) {
         try {
             val outer = JSONObject(String(raw, Charsets.UTF_8))
-            val from = outer.optString("f").lowercase().trim()
+            val from = outer.optString("f")
             if (from.isBlank() || from == me) return
             val inner = JSONObject(Crypto.decrypt(outer.getString("d"), listOf(me, from)))
+
+            if (inner.has("typing")) {
+                ctx.sendBroadcast(Intent(ACTION_TYPING).setPackage(ctx.packageName).putExtra("peer", from))
+                return
+            }
 
             if (inner.has("ack")) {
                 Db(ctx).updateStatus(inner.getString("ack"), "delivered")
@@ -155,14 +261,19 @@ object Mqtt {
                 return
             }
 
-            val to = inner.optString("t").lowercase().trim()
+            val to = inner.optString("t")
             if (to != me) return
             val id = inner.getString("id")
             val ts = inner.optLong("ts", System.currentTimeMillis())
             val text = inner.getString("m")
+            val senderName = inner.optString("n")
 
-            Db(ctx).insert(Msg(id, from, false, text, ts, "in"))
-            notifyIfNeeded(ctx, from, text)
+            val db = Db(ctx)
+            if (senderName.isNotBlank() && db.contactName(from) == null) {
+                db.setContact(from, senderName)
+            }
+            db.insert(Msg(id, from, false, text, ts, "in"))
+            notifyIfNeeded(ctx, from, senderName, text)
             broadcastMsg(ctx, from)
 
             try {
@@ -177,8 +288,9 @@ object Mqtt {
         }
     }
 
-    private fun notifyIfNeeded(ctx: Context, peer: String, text: String) {
+    private fun notifyIfNeeded(ctx: Context, peer: String, senderName: String, text: String) {
         if (AppState.foreground && AppState.openChat == peer) return
+        val titleName = senderName.ifBlank { Db(ctx).contactName(peer) ?: Util.formatPhone(peer) }
         val i = Intent(ctx, ChatActivity::class.java).putExtra("peer", peer)
         val pi = PendingIntent.getActivity(
             ctx, peer.hashCode(), i,
@@ -186,7 +298,7 @@ object Mqtt {
         )
         val n = NotificationCompat.Builder(ctx, CHANNEL_MSGS)
             .setSmallIcon(R.drawable.ic_stat_msg)
-            .setContentTitle(ctx.getString(R.string.notif_title, peer))
+            .setContentTitle(ctx.getString(R.string.notif_title, titleName))
             .setContentText(text)
             .setAutoCancel(true)
             .setContentIntent(pi)

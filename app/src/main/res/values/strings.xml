@@ -1,33 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">پیام‌رسان سوکوت</string>
-    <string name="tagline">گفتگوی زنده با مخاطبین‌تان، از راه دور و بدون شماره تلفن</string>
-    <string name="username_hint">شناسه کاربری (حروف انگلیسی)</string>
-    <string name="name_hint">نام نمایشی شما</string>
-    <string name="btn_start">شروع گفتگو</string>
-    <string name="err_username">شناسه باید ۳ تا ۲۰ کاراکتر انگلیسی، عدد یا _ باشد</string>
+    <string name="tagline_phone">با شماره موبایل وارد شوید و با مخاطبین‌تان زنده گفتگو کنید</string>
+
+    <!-- ورود -->
+    <string name="phone_hint">شماره موبایل (مثال: 09123456789)</string>
+    <string name="btn_continue">ادامه</string>
+    <string name="err_phone">شماره موبایل معتبر نیست (مثال: 09123456789)</string>
+    <string name="server_unset">آدرس سرور تنظیم نشده — برای دریافت کد پیامکی تنظیم کنید</string>
+    <string name="server_set">سرور: %1$s</string>
+    <string name="server_title">آدرس سرور</string>
+    <string name="server_hint">https://your-server.com</string>
+    <string name="server_desc">آدرس سروری که با node server.js اجرا کرده‌اید را وارد کنید. برای گرفتن کد پیامکی لازم است.</string>
+    <string name="need_server_title">سرور تنظیم نشده</string>
+    <string name="need_server_msg">برای ارسال کد پیامکی، اول آدرس سرور را وارد کنید یا از حالت آزمایشی استفاده کنید.</string>
+    <string name="server_set_btn">تنظیم سرور</string>
+    <string name="demo_login">ورود آزمایشی (بدون تایید پیامکی)</string>
+    <string name="demo_confirm">در حالت آزمایشی بدون سرور و بدون کد پیامکی وارد می‌شوید. برای ورود واقعی، آدرس سرور را تنظیم کنید. ادامه؟</string>
+    <string name="conn_error_title">اتصال به سرور ممکن نشد</string>
+    <string name="conn_error_msg">به سرور دسترسی نداریم. آدرس سرور را بررسی کنید یا از حالت آزمایشی استفاده کنید.</string>
+    <string name="conn_error_short">خطا در ارتباط با سرور</string>
+    <string name="first_chat_note">شناسه شما همان شماره موبایل‌تان است؛ با دکمه اشتراک‌گذاری در پروفایل، آن را برای دوستانتان بفرستید.</string>
+
+    <!-- کد تایید -->
+    <string name="otp_title">کد تایید</string>
+    <string name="otp_desc">کد ۶ رقمی پیامک‌شده به شماره زیر را وارد کنید</string>
+    <string name="code_hint">کد تایید</string>
+    <string name="btn_verify">تایید و ورود</string>
+    <string name="btn_resend">ارسال مجدد کد</string>
+    <string name="resend_in">ارسال مجدد تا %1$d ثانیه دیگر</string>
+    <string name="err_code">کد وارد شده معتبر نیست</string>
+    <string name="code_sent">کد جدید ارسال شد</string>
+    <string name="dev_code_note">حالت آزمایشی سرور: کد به‌صورت خودکار پر شد</string>
+    <string name="sms_auto_note">اگر اجازه بدهید، کد به‌صورت خودکار از پیامک خوانده و پر می‌شود</string>
+
+    <!-- نام -->
+    <string name="name_title">نام شما</string>
+    <string name="name_hint">نام نمایشی</string>
+    <string name="name_desc">این نام برای مخاطبین شما نمایش داده می‌شود</string>
+    <string name="btn_finish">شروع گفتگو</string>
     <string name="err_name">نام نمایشی را وارد کنید</string>
-    <string name="first_chat_note">شناسه شما مثل شماره حساب است؛ آن را با دوستانتان به اشتراک بگذارید تا بتوانند با شما گفتگو کنند.</string>
+
+    <!-- لیست گفتگوها -->
     <string name="chats_title">گفتگوها</string>
-    <string name="my_id">شناسه شما: %1$s (برای کپی لمس کنید)</string>
-    <string name="copied">کپی شد</string>
+    <string name="me_info">%1$s • %2$s</string>
     <string name="state_online">وضعیت اتصال: آنلاین</string>
     <string name="state_connecting">وضعیت اتصال: در حال اتصال…</string>
     <string name="state_offline">وضعیت اتصال: بدون اتصال</string>
     <string name="add_contact">افزودن مخاطب</string>
-    <string name="peer_hint">شناسه مخاطب (مثلاً ali_1380)</string>
+    <string name="contact_name_hint">نام مخاطب (اختیاری)</string>
     <string name="open_chat">باز کردن گفتگو</string>
-    <string name="err_peer">شناسه مخاطب نامعتبر است</string>
-    <string name="empty_chats">هنوز گفتگویی ندارید.\nبا دکمه + شناسه مخاطب را اضافه کنید.</string>
+    <string name="member_yes">این شماره عضو پیام‌رسان سوکوت است</string>
+    <string name="member_no">این شماره هنوز عضو نشده است</string>
+    <string name="empty_chats">هنوز گفتگویی ندارید.\nبا دکمه + شماره مخاطب را اضافه کنید.</string>
     <string name="empty_chat_one">اولین پیام را بفرستید</string>
-    <string name="message_hint">پیام…</string>
-    <string name="send_cd">ارسال</string>
-    <string name="add_cd">افزودن مخاطب</string>
+    <string name="chat_you_prefix">شما: </string>
     <string name="delete_chat">حذف گفتگو</string>
     <string name="del_confirm">این گفتگو و همه پیام‌های آن از این گوشی حذف شود؟</string>
     <string name="delete">حذف</string>
     <string name="cancel">لغو</string>
-    <string name="notif_title">پیام جدید از %1$s</string>
+    <string name="msg_copied">پیام کپی شد</string>
+
+    <!-- چت -->
+    <string name="typing">در حال نوشتن…</string>
+    <string name="online">آنلاین</string>
+    <string name="offline_at">آخرین بازدید %1$s</string>
+    <string name="message_hint">پیام…</string>
+    <string name="send_cd">ارسال</string>
+    <string name="add_cd">افزودن مخاطب</string>
+
+    <!-- پروفایل -->
+    <string name="profile_title">پروفایل</string>
+    <string name="phone_label">شماره موبایل</string>
+    <string name="tap_to_copy">لمس = کپی</string>
+    <string name="tap_to_edit">لمس = ویرایش</string>
+    <string name="edit_name">ویرایش نام</string>
+    <string name="btn_save">ذخیره</string>
+    <string name="btn_share_card">اشتراک‌گذاری کارت من</string>
+    <string name="share_card_text">من در پیام‌رسان سوکوت هستم! نام من: %1$s — شماره من: %2$s. برنامه را نصب کن و با من گفتگو کن.</string>
+    <string name="btn_logout">خروج از حساب</string>
+    <string name="logout_confirm">از حساب خود خارج می‌شوید؟ (تاریخچه گفتگوها باقی می‌ماند)</string>
+    <string name="about_text">پیام‌رسان سوکوت نسخه ۲.۰.۰ — سازنده: Sukot</string>
+    <string name="copied">کپی شد</string>
+
+    <!-- نوتیفیکیشن -->
+    <string name="notif_title">پیام از %1$s</string>
     <string name="service_running">متصل به سرور گفتگو</string>
     <string name="notif_channel_msgs">پیام‌های جدید</string>
     <string name="notif_channel_service">وضعیت برنامه</string>

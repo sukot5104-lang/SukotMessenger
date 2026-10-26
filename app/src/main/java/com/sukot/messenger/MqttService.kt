@@ -17,7 +17,7 @@ class MqttService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val user = Prefs.myUsername(this)
+        val user = Prefs.myPhone(this)
         if (user.isBlank()) {
             stopSelf()
             return START_NOT_STICKY
@@ -25,6 +25,11 @@ class MqttService : Service() {
         startForeground(NOTIF_ID, buildNotif())
         Mqtt.connect(this, user)
         return START_STICKY
+    }
+
+    override fun onDestroy() {
+        Mqtt.publishPresence(false)
+        super.onDestroy()
     }
 
     private fun buildNotif(): Notification {

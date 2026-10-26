@@ -13,9 +13,18 @@ object Prefs {
             .edit().putString(key, value).apply()
     }
 
-    fun isLoggedIn(context: Context): Boolean = get(context, "username").isNotBlank()
+    fun remove(context: Context, key: String) {
+        context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
+            .edit().remove(key).apply()
+    }
 
-    fun myUsername(context: Context): String = get(context, "username").lowercase().trim()
+    fun isLoggedIn(context: Context): Boolean = get(context, "phone").isNotBlank()
 
-    fun myName(context: Context): String = get(context, "display").ifBlank { myUsername(context) }
+    fun myPhone(context: Context): String = get(context, "phone")
+
+    fun myName(context: Context): String = get(context, "display").ifBlank { "کاربر سوکوت" }
+
+    fun server(context: Context): String = get(context, "server").trim().trimEnd('/')
+
+    fun token(context: Context): String = get(context, "token")
 }

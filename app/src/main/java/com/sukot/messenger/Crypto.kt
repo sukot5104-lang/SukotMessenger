@@ -24,6 +24,13 @@ object Crypto {
         return "sukot-" + d.joinToString("") { "%02x".format(it) }.substring(0, 20)
     }
 
+    fun presenceFor(user: String): String {
+        val u = user.lowercase().trim()
+        val d = MessageDigest.getInstance("SHA-256")
+            .digest("sukot-v1|presence|$u|$SECRET".toByteArray(Charsets.UTF_8))
+        return "sukot/v1/p/" + d.joinToString("") { "%02x".format(it) }.substring(0, 24)
+    }
+
     private fun keyFor(users: List<String>): SecretKeySpec {
         val norm = users.map { it.lowercase().trim() }.sorted().joinToString("|")
         val d = MessageDigest.getInstance("SHA-256")
