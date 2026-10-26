@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">پیام‌رسان سوکوت</string>
+    <string name="tagline">گفتگوی زنده با مخاطبین‌تان، از راه دور و بدون شماره تلفن</string>
+    <string name="username_hint">شناسه کاربری (حروف انگلیسی)</string>
+    <string name="name_hint">نام نمایشی شما</string>
+    <string name="btn_start">شروع گفتگو</string>
+    <string name="err_username">شناسه باید ۳ تا ۲۰ کاراکتر انگلیسی، عدد یا _ باشد</string>
+    <string name="err_name">نام نمایشی را وارد کنید</string>
+    <string name="first_chat_note">شناسه شما مثل شماره حساب است؛ آن را با دوستانتان به اشتراک بگذارید تا بتوانند با شما گفتگو کنند.</string>
+    <string name="chats_title">گفتگوها</string>
+    <string name="my_id">شناسه شما: %1$s (برای کپی لمس کنید)</string>
+    <string name="copied">کپی شد</string>
+    <string name="state_online">وضعیت اتصال: آنلاین</string>
+    <string name="state_connecting">وضعیت اتصال: در حال اتصال…</string>
+    <string name="state_offline">وضعیت اتصال: بدون اتصال</string>
+    <string name="add_contact">افزودن مخاطب</string>
+    <string name="peer_hint">شناسه مخاطب (مثلاً ali_1380)</string>
+    <string name="open_chat">باز کردن گفتگو</string>
+    <string name="err_peer">شناسه مخاطب نامعتبر است</string>
+    <string name="empty_chats">هنوز گفتگویی ندارید.\nبا دکمه + شناسه مخاطب را اضافه کنید.</string>
+    <string name="empty_chat_one">اولین پیام را بفرستید</string>
+    <string name="message_hint">پیام…</string>
+    <string name="send_cd">ارسال</string>
+    <string name="add_cd">افزودن مخاطب</string>
+    <string name="delete_chat">حذف گفتگو</string>
+    <string name="del_confirm">این گفتگو و همه پیام‌های آن از این گوشی حذف شود؟</string>
+    <string name="delete">حذف</string>
+    <string name="cancel">لغو</string>
+    <string name="notif_title">پیام جدید از %1$s</string>
+    <string name="service_running">متصل به سرور گفتگو</string>
+    <string name="notif_channel_msgs">پیام‌های جدید</string>
+    <string name="notif_channel_service">وضعیت برنامه</string>
+</resources>
